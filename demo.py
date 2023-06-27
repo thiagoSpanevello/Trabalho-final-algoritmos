@@ -1,3 +1,6 @@
+import re
+
+
 class Aluno:
     def __init__(self, nome, cpf, peso, altura, status):
         self.nome = nome
@@ -118,7 +121,31 @@ def nomeValido(input):  # verifica se o nome é válido (!número e >3 letras)
             return True
 
 
+def cpfValido(input):
+    try:
+        int(input)
+        tamanho = len(str(input))
+        if (tamanho != 11):
+            return -1
+        else:
+            str(input)
+            formatado = '{0}.{1}.{2}-{3}'.format(
+                input[0:3], input[3:6], input[6:9], input[9:11])
+            return formatado
+    except ValueError:  # cai aqui se não ser um número inteiro
+        # xxx.xxx.xxx-xx
+        tamanho = len(input)
+        if (tamanho != 14):
+            return -1
+        else:
+            numeros = re.sub('\D', '', input)
+            if (len(str(numeros)) != 11):  # se não ser 11 numeros, é inválido
+                return -1
+            else:
+                return input
+
 # ALUNO -------------------------------------------------------
+
 
 def novoAluno(aluno):  # --- CASO 1 ---
     if (aluno):
@@ -132,7 +159,11 @@ def novoAluno(aluno):  # --- CASO 1 ---
         if (verificacao != True):  # se o nome for inválido
             print(verificacao)  # printa a mensagem dizendo o que tá errado
 
-    cpf = input('CPF do aluno: ')
+    cpf = -1
+    while cpf == -1:
+        cpf = cpfValido(input('CPF do aluno: '))
+        if (cpf == -1):
+            print('\n(!) CPF inválido\n')
 
     peso = -1
     while peso == -1:
@@ -318,6 +349,9 @@ def excluirTreino(idAluno, nomeExer):
                 case _:
                     print('(!) Opção inválida')
                     excluirTreino(idAluno, nomeExer)
+        else:
+            print('(!) Exercício não encontrado')
+            return menuTreino(idAluno)
     else:
         print('Tem certeza que quer excluir o treino todo?')
         caso = numeroValido('int', input(
